@@ -108,7 +108,7 @@ The dataset was provided as part of a data science bootcamp and contains anonymi
      </tr>
      <tr>
        <th>Class Imbalance</th>
-       <th>class_weight='balanced' (Random Forest</th>
+       <th>class_weight='balanced' (Random Forest)</th>
      </tr>  
    </table>  
     
@@ -138,9 +138,9 @@ Hyperparameters: depth=4, learning_rate=0.03, l2_leaf_reg: 5
 
 | Metric | Score |
 |---|---|
-| ROC-AUC | **0.92** |
 | Recall (churn) | **0.82** |
-| F1-score (churn) | 0.71 |
+| F1-score (churn) | **0.71** |
+| ROC-AUC | 0.92 |
 | Accuracy | 0.82 |
 
 #
