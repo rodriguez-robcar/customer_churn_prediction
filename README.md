@@ -183,8 +183,8 @@ By identifying at-risk customers early, Interconnect can:
 ### ▶️ Run Locally
 
 ```bash
-git clone https://github.com/rodriguez-robcar/churn_project_app
-cd churn-project
+git clone https://github.com/rodriguez-robcar/customer_churn_prediction
+cd customer_churn_prediction
 pip install -r requirements.txt
 streamlit run app.py
 ```
