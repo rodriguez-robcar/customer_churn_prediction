@@ -1,101 +1,195 @@
-# ${\color{blue}\text{Churn Project App}}$
+# ${\color{blue}\text{Customer Churn Prediction - Interconnect Telecom}}$
+A machine learning system to identify customers at risk of leaving, enabling proactive retention campaigns before they churn.
 
-### 📌 Project description
-The telecom operator Interconnect would like to be able to forecast their churn of clients. If it's discovered that a user is planning to leave, they will be offered promotional codes and special plan options. Interconnect's marketing team has collected some of their clientele's personal data, including information about their plans and contracts.
+🔗 Live Demo → [churn-project-rodriguez-robcar.streamlit.app](https://churn-project-rodriguez-robcar.streamlit.app/)
+#
 
-Interconnect mainly provides two types of services:
+### 📌 Overview
+Interconnect, a telecom operator, wants to proactively identify customers likely to cancel their service. When a customer is flagged as high-risk, the marketing team can intervene with promotional codes and tailored plan offers before they leave.
+This project builds an end-to-end churn prediction pipeline — from raw customer data through feature engineering, model selection, and a deployed Streamlit app.
 
-1. Landline communication. The telephone can be connected to several lines simultaneously.
-2. Internet. The network can be set up via a telephone line (DSL, digital subscriber line) or through a fiber optic cable.
+#
 
-Some other services the company provides include:
+### 🗂️ Services Offered by Interconnect
 
-- Internet security: antivirus software (DeviceProtection) and a malicious website blocker (OnlineSecurity)
-- A dedicated technical support line (TechSupport)
-- Cloud file storage and data backup (OnlineBackup)
-- TV streaming (StreamingTV) and a movie directory (StreamingMovies)
-- The clients can choose either a monthly payment or sign a 1- or 2-year contract. They can use various payment methods and receive an electronic invoice after a transaction.
+Interconnect provides the following services, all of which feed into customer behavior data:
 
-### 📊 Dataset Description
-The dataset was provided as part of a data science bootcamp and contains anonymized customer behavior and subscription information used for churn modeling.
+Core services
 
-Data consists of 4 tables:
+- Landline communication — phone lines with multi-line support
+- Internet — via DSL (digital subscriber line) or fiber optic cable
+
+Add-on services
+
+- OnlineSecurity — malicious website blocker
+- DeviceProtection — antivirus software
+- TechSupport — dedicated technical support line
+- OnlineBackup — cloud file storage and data backup
+- StreamingTV / StreamingMovies — media streaming
+
+Billing & contracts
+
+- Monthly, 1-year, or 2-year contract options
+- Multiple payment methods supported
+- Electronic invoicing available
+
+#
+
+### 📊 Dataset
+The dataset was provided as part of a data science bootcamp and contains anonymized customer behavior and subscription data across four tables.
+
+| Table | Description |
+|-------|----------|
+| contract.csv | Contract and billing details |
+| personal.csv | Customer demographics |
+| internet.csv | Internet service subscriptions |
+| phone.csv | Phone service details |
+
+<details>
+<summary><strong>Column reference (click to expand)</strong></summary>
+  
 - <mark>contract.csv</mark>: contract information
-  - customerID
-  - BeginDate
-  - EndDate
-  - Type
-  - PaperlessBilling
-  - PaymentMethod
-  - MonthlyCharges
-  - TotalCharges
+  - customerID, BeginDate, EndDate
+  - Type - conntract duration (monthly, 1-year, 2-year)
+  - PaperlessBilling, PaymentMethod
+  - MonthlyCharges, TotalCharges
  
 - <mark>personal.csv</mark>: client's personal information
-  - customerID
-  - gender
-  - SeniorCitizen
-  - Partner
-  - Dependents
+  - customerID, gender, SeniorCitizen, Partner, Dependents
  
 - <mark>internet.csv</mark>: internet services information
-  - customerID
-  - InternetService
-  - OnlineSecurity
-  - OnlineBackup
-  - DeviceProtection
-  - TechSupport
-  - StreamingTV
-  - StreamingMovies
+  - customerID, InternetService
+  - OnlineSecurity, OnlineBackup, DeviceProtection
+  - TechSupport, StreamingTV, StreamingMovies
  
-- <mark>phone.csv>/mark>: phone services information
-  - customerID
-  - MultipleLines
+- <mark>phone.csv</mark>: phone services information
+  - customerID, MultipleLines
+ 
+</details>
+
+#
  
 ### 🚀 Workflow
 
-1. 🔍 Data Cleaning & Analysis
-   - Filled missing TotalCharges with MonthlyCharges
+1. 🔍 Data Cleaning & EDA
+   - Merged four source tables on customerID
+   - Imputed missing TotalCharges values with MonthlyCharges (customers with no charge history yet)
+   - Explored churn distribution: 73% active / 27% churned — imbalanced dataset
 
   
-2. 🛠 Data Preprocessing
-   - OHE for InternetService and PaymentMehod
+2. 🛠 Feature Engineering
+   - Tenure — computed as the number of months since contract start. For active customers (no EndDate), the dataset's latest date is used as reference.
    - Ordinal Encoder for Type
    - 0-1 Mapping for binary features
    - Scaling for Logistic Regression
    - Class weight for Random Forest (class imbalance is 73/27)
   
-3. Feature Engineering
-   - Tenure: Total time since joining. For active users, max date   
+3. Preprocessing
+   <table>
+     <tr>
+       <th>Feature type</th>
+       <th>Strategy</th>
+     </tr>
+     <tr>
+       <th>Binary features (Yes / No)</th>
+       <th>0-1 mapping</th>
+     </tr>
+     <tr>
+       <th>Internet Services, Payment Method</th>
+       <th>One-Hot Encoding</th>
+     </tr>
+     <tr>
+       <th>Type (contract length)</th>
+       <th>Ordinal Encoding</th>
+     </tr>
+     <tr>
+       <th>Numeric features</th>
+       <th>Standard scaling (for Logistic Regression)</th>
+     </tr>
+     <tr>
+       <th>Class Imbalance</th>
+       <th>class_weight='balanced' (Random Forest</th>
+     </tr>  
+   </table>  
     
 4. 🤖 Modeling and Evaluation
-   - Dummy Classifier as baseline
-   - Logistic Regression, Random Forest Classifier, Catboost Classifier, XGB Classifier, LightGBM Classifier
-   - Metric Selection: Evaluated models based on Recall (to catch as many churners as possible) and the ROC-AUC score
-   - Accuracy is avoid since "no churn" prediction is 73%
+   Baseline: DummyClassifier
 
-## Model performance metrics
+   Models Evaluated:
+   - Logistic Regression
+   - Random Forest
+   - CatBoost Classifier
+   - XGBoost Classifier
+   - LightGBM Classifier
 
-Model: CatBoost Classifier
+Metric rationale: Accuracy was deprioritized — a model predicting "no churn" for all customers would achieve 73% accuracy by default. The primary metrics are:
+
+- Recall (churn class) — to catch as many at-risk customers as possible
+- F1-score - to evaluate performance on imbalanced datasets where the positive class is rare, as it ensures both few false positives and few false negatives
+- ROC-AUC — to measure overall ranking quality
+
+#
+
+🏆 Best Model: CatBoost Classifier
 
 Hyperparameters: depth=4, learning_rate=0.03, l2_leaf_reg: 5
 
 #### Test Set Metrics
 
-- ROC-AUC: 0.92
-- Accuracy: 0.82
-- Recall (churn): 0.82
-- F1-score: 0.71
+| Metric | Score |
+|---|---|
+| ROC-AUC | **0.92** |
+| Recall (churn) | **0.82** |
+| F1-score (churn) | 0.71 |
+| Accuracy | 0.82 |
 
+#
 
-## Business Context
+### 💼 Business Context
 
 Customer churn represents a significant threat to subscription-based revenue models. Retaining existing customers is typically more cost-effective than acquiring new ones.
 
-This project develops a churn prediction model to identify customers at risk of leaving, enabling targeted retention interventions and improved marketing efficiency.
+By identifying at-risk customers early, Interconnect can:
 
-## Deployment link
-https://churn-project-rodriguez-robcar.streamlit.app/
+- Target retention offers only to customers who need them (reducing campaign waste)
+- Prioritize high-value customers for proactive outreach
+- Measure and improve retention ROI over time
 
-## Screenshot
+#
+
+### 🛠️ Tech Stack
+
+`Python` · `Pandas` · `Scikit-learn` · `CatBoost` · `XGBoost` · `LightGBM` · `Streamlit`
+
+#
+
+### 📁 Project Structure
+
+```
+├── data/
+│   ├── contract.csv
+│   ├── personal.csv
+│   ├── internet.csv
+│   └── phone.csv
+├── notebooks/
+│   └── churn_analysis.ipynb
+├── app.py                  # Streamlit app
+├── model/                  # Saved model artifacts
+└── README.md
+```
+
+#
+
+### ▶️ Run Locally
+
+```bash
+git clone https://github.com/your-username/churn_project_app
+cd churn-project
+pip install -r requirements.txt
+streamlit run app.py
+```
+#
+
+### Screenshot
 
 <img width="2552" height="2065" alt="screencapture-churn-project-rodriguez-robcar-streamlit-app-2026-02-18-20_51_32" src="https://github.com/user-attachments/assets/42bb52ad-0de4-4297-a37b-a2dcaec84b19" />
