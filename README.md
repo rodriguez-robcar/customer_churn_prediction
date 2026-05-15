@@ -167,14 +167,19 @@ By identifying at-risk customers early, Interconnect can:
 
 ```
 ├── data/
-│   ├── contract.csv
-│   ├── personal.csv
-│   ├── internet.csv
-│   └── phone.csv
+│   ├── raw
+│         ├── contract.csv
+│         ├── personal.csv
+│         ├── internet.csv
+│         └── phone.csv
 ├── notebooks/
 │   └── churn_analysis.ipynb
+├── train.py
 ├── app.py                  # Streamlit app
 ├── model/                  # Saved model artifacts
+│   ├── cat_features.pkl
+│   ├── churn_model.pkl
+│   └── features_names.pkl
 └── README.md
 ```
 
@@ -190,6 +195,6 @@ streamlit run app.py
 ```
 #
 
-### Screenshot
+### 🖥️ Screenshot
 
 <img width="2552" height="2065" alt="screencapture-churn-project-rodriguez-robcar-streamlit-app-2026-02-18-20_51_32" src="https://github.com/user-attachments/assets/42bb52ad-0de4-4297-a37b-a2dcaec84b19" />
